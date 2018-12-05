@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+   <title>Spotify Lyrics</title>
+   <link href="https://sp-bootstrap.global.ssl.fastly.net/8.0.0/sp-bootstrap.min.css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+   <script>
+
+      let lastTrack = ''
+      
+      function recieveData(){
+         console.log("Recieving data")
+         $.get("/send", function(data) {
+            lyrics = $.parseJSON(data);
+            lyrics = lyrics.replace(/\n/g, "<br />");
+            $("#lyricBody").empty();
+            $("#lyricBody").append(lyrics);
+         })
+      }
+
+      function sendData(track,artist){
+         console.log("Sending data");
+         $.post("/reciever", {
+            trackName: track,
+            artistName: artist
+         }, function(){
+
+         });
+      }
+
+      function extractTrack(track){
+        console.log(track);
+        trackName = track.item.name;
+        artistName = track.item.artists[0].name;
+        console.log(trackName,artistName);
+        if (lastTrack != trackName){
+         $("#scriptTrack").empty();
+         $("#scriptArtist").empty();
+         $("#scriptTrack").append("Currently playing: " + trackName);
+         $("#scriptArtist").append("By: " + artistName);
+         sendData(trackName,artistName);
+         setTimeout(recieveData(),1000)
+        }
+        lastTrack = trackName
+      }
+      function getTrack(token){
+         console.log(token);
+         fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+               headers: {
+                  'Authorization': `Bearer ${token}`
+               }
+            }).then(response => {
+               return response.json();
+            }).then(data => {
+               extractTrack(data);
+          })
+      }
+      getTrack("{{ token }}");
+      setInterval(function() {
+         getTrack("{{ token }}");
+      }, 5000);
+   </script>
+
+
+<html>
+   <body>
+      <div id="trackContainer">
+         <h1 id="scriptTrack"></h1>
+         <h3 id="scriptArtist"></h3>
+      </div>
+
+      <div id="lyricContainer">
+         <h4 id="lyricHead">Lyrics:</h4>
+         <p id="lyricBody"></p>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,63 @@
+/* $green: rgb(30, 215, 96);
+$light-black: rgb(40, 40, 40);
+$black: rgb(24, 24, 24);
+$grey: rgb(170, 170, 170);
+$sand: rgb(200, 200, 200);
+$white: rgb(255, 255, 255);
+$blue: #4688d7; */
+  body {
+      background-color: rgb(40,40,40);
+      color: rgba(255, 255, 255);
+      font-family: Circular, Helvetica arial, sans-serif;
+      margin: 70px;
+    }
+  #scriptTrack,#scriptArtist{
+    margin: 0;
+    padding: 0;
+  }
+
+  #lyricHead{
+    color: rgb(30,215,96);
+  }
+
+  #new-releases {
+    max-width: 1800px;
+    padding: 40px 0;
+  }
+  
+  #loginPage{
+    text-align: center;
+  }
+
+  .sp-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .sp-entity-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 15px 5px;
+    width: 250px;
+  }
+  .sp-cover {
+    height: 200px;
+    width: 200px;
+    cursor: pointer;
+    background-size: contain !important;
+  }
+  .sp-cover:hover {
+    box-shadow: inset 0 0 0 1000px rgba(255, 255, 255, 0.4);
+  }
+  
+  .sp-title {
+    margin: 15px 0 0;
+  }
+  
+  .sp-by {
+    margin: 0;
+  }
