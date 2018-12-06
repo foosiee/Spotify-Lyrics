@@ -1,5 +1,6 @@
 import json
-from flask import Flask, request, redirect, g, render_template, Response
+import os
+from flask import Flask, request, redirect, g, render_template, Response, session
 import requests
 import base64
 import urllib.parse
@@ -58,23 +59,23 @@ def login():
 @app.route("/callback/q")
 def callback():
     # Auth Step 4: Requests refresh and access tokens
-    auth_token = request.args['code']
-    code_payload = {
+    session['auth_token'] = request.args['code']
+    session['code_payload'] = {
         "grant_type": "authorization_code",
-        "code": str(auth_token),
+        "code": str(session['auth_token']),
         "redirect_uri": REDIRECT_URI
     }
     base = "{}:{}"
     format_client = base.format(CLIENT_ID,CLIENT_SECRET)
     base64encoded = base64.urlsafe_b64encode(format_client.encode()).decode()
     headers = {"Authorization": "Basic {}".format(base64encoded)}
-    post_request = requests.post(SPOTIFY_TOKEN_URL, data=code_payload, headers=headers)
+    post_request = requests.post(SPOTIFY_TOKEN_URL, data=session['code_payload'], headers=headers)
 
     # Auth Step 5: Tokens are Returned to Application
     response_data = json.loads(post_request.text)
 
     global access_token
-    access_token = response_data["access_token"]
+    session['access_token'] = response_data["access_token"]
 
     refresh_token = response_data["refresh_token"]
     token_type = response_data["token_type"]
@@ -82,14 +83,14 @@ def callback():
 
     # Auth Step 6: Use the access token to access Spotify API
     global authorization_header
-    authorization_header = {"Authorization":"Bearer {}".format(access_token)}
+    session['authorization_header'] = {"Authorization":"Bearer {}".format(session['access_token'])}
     
     return redirect("/lyrics")
 
 
 @app.route("/lyrics")
 def displayLyrics():
-    return render_template("lyrics.html",token=str(access_token))
+    return render_template("lyrics.html",token=str(session['access_token']))
 
 def getLyrics(track,artist):
     s = Song(track,artist)
@@ -97,6 +98,7 @@ def getLyrics(track,artist):
 
 @app.route('/reciever', methods = ['POST'])
 def getTrackInfo():
+
     global postTrack
     postTrack = request.form['trackName']
 
@@ -112,5 +114,6 @@ def sendLyrics():
     return json.dumps(lyrics)
 
 if __name__ == "__main__":
+    app.secret_key = os.urandom(24)
     app.run(debug=True,port=PORT)
 
