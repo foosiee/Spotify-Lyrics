@@ -14,6 +14,7 @@
          $.get("/send", function(data) {
             lyrics = $.parseJSON(data);
             lyrics = lyrics.replace(/\n/g, "<br />");
+            console.log(lyrics);
             $("#lyricBody").empty();
             $("#lyricBody").append(lyrics);
          })
@@ -74,5 +75,12 @@
          <h4 id="lyricHead">Lyrics:</h4>
          <p id="lyricBody"></p>
       </div>
+
+      <div class="footer">
+         <a id="github" href="https://github.com/foosiee/Spotify-Lyrics" target="_blank">
+             <p id="github">View on GitHub</p>
+         </a>
+     </div>
+
    </body>
 </html>

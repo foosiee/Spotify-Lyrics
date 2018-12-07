@@ -12,6 +12,12 @@ from tswift import Song
 
 app = Flask(__name__)
 
+global postArtist
+global postTrack
+
+postArtist = ''
+postTrack = ''
+
 
 #  Client Keys
 CLIENT_ID = ""
@@ -93,6 +99,7 @@ def displayLyrics():
     return render_template("lyrics.html",token=str(session['access_token']))
 
 def getLyrics(track,artist):
+    
     s = Song(track,artist)
     return s.lyrics
 
@@ -101,19 +108,21 @@ def getTrackInfo():
 
     global postTrack
     postTrack = request.form['trackName']
+    print(postTrack)
 
     global postArtist
     postArtist = request.form['artistName']
-    return "Recieved"
+    print(postArtist)
+
+    return "recieved"
 
 @app.route('/send')
 def sendLyrics():
-    track = postTrack
-    artist = postArtist
-    lyrics = getLyrics(track,artist)
-    return json.dumps(lyrics)
-
+    try:
+        lyrics = getLyrics(postTrack,postArtist)
+        return json.dumps(lyrics)
+    except KeyError:
+        return json.dumps("Lyrics not found :(")
 if __name__ == "__main__":
     app.secret_key = os.urandom(24)
     app.run(debug=True,port=PORT)
-
