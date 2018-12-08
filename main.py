@@ -13,8 +13,8 @@ app = Flask(__name__)
 
 
 #  Client Keys
-CLIENT_ID = "435590f455b842eea1ef3857916f96c8"
-CLIENT_SECRET = "231bc6d0d7a7450db915dd2f4689d0bb"
+CLIENT_ID = ""
+CLIENT_SECRET = ""
 
 # Spotify URLS
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
