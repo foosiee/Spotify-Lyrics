@@ -5,19 +5,13 @@ import requests
 import base64
 import urllib.parse
 from tswift import Song
+from urllib.parse import quote_plus
 
 # Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
 # Visit this url to see all the steps, parameters, and expected response. 
 
 
 app = Flask(__name__)
-
-global postArtist
-global postTrack
-
-postArtist = ''
-postTrack = ''
-
 
 #  Client Keys
 CLIENT_ID = ""
@@ -71,6 +65,7 @@ def callback():
         "code": str(session['auth_token']),
         "redirect_uri": REDIRECT_URI
     }
+
     base = "{}:{}"
     format_client = base.format(CLIENT_ID,CLIENT_SECRET)
     base64encoded = base64.urlsafe_b64encode(format_client.encode()).decode()
@@ -80,49 +75,78 @@ def callback():
     # Auth Step 5: Tokens are Returned to Application
     response_data = json.loads(post_request.text)
 
-    global access_token
     session['access_token'] = response_data["access_token"]
 
-    refresh_token = response_data["refresh_token"]
+    session['refresh_token'] = response_data["refresh_token"]
     token_type = response_data["token_type"]
     expires_in = response_data["expires_in"]
+    print(expires_in)
 
     # Auth Step 6: Use the access token to access Spotify API
-    global authorization_header
     session['authorization_header'] = {"Authorization":"Bearer {}".format(session['access_token'])}
     
     return redirect("/lyrics")
 
+@app.route("/sendtoken")
+def sendToken():
+    return json.dumps(session['access_token'])
 
 @app.route("/lyrics")
 def displayLyrics():
-    return render_template("lyrics.html",token=str(session['access_token']))
+    return render_template("lyrics.html")
 
 def getLyrics(track,artist):
-    
-    s = Song(track,artist)
-    return s.lyrics
+    try:
+        s = Song(track,artist)
+        return s.lyrics
+    except KeyError:
+        track +=  " " + artist + ' metrolyrics'
+        name = quote_plus(track)
+
+        hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11'
+            '(KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Connection': 'keep-alive'}
+
+        url = 'http://www.google.com/search?q=' + name
+
+        result = requests.get(url, headers=hdr).text
+        link_start = result.find('http://www.metrolyrics.com')
+
+        link_end = result.find('.html', link_start + 1)
+        link = result[link_start:link_end +5]
+        try:
+            s = Song(url=link)
+            return s.lyrics
+        except AttributeError:
+            return "no lyrics found:("
 
 @app.route('/reciever', methods = ['POST'])
 def getTrackInfo():
 
-    global postTrack
-    postTrack = request.form['trackName']
-    print(postTrack)
+    session['postTrack'] = request.form['trackName']
 
-    global postArtist
-    postArtist = request.form['artistName']
-    print(postArtist)
+    session['postArtist'] = request.form['artistName']
 
-    return "recieved"
+    session['lyrics'] = getLyrics(session['postTrack'],session['postArtist'])
+    print("Got track -- Track: ", session['postTrack'], " Artist: ", session['postArtist'])
+
+    return "Track: {} Artist: {}".format(session['postTrack'],session['postArtist'])
 
 @app.route('/send')
 def sendLyrics():
     try:
-        lyrics = getLyrics(postTrack,postArtist)
-        return json.dumps(lyrics)
+        print("Sent lyrics for: ", session['postTrack'])
+        return json.dumps(session['lyrics'])
     except KeyError:
-        return json.dumps("Lyrics not found :(")
+        return json.dumps("no lyrics found :(")
+
+@app.route('/logout')
+def logout():
+    session.pop(session['access_token'],None)
+    session.clear()
+    return redirect("http://127.0.0.1:5555", code=302)
 if __name__ == "__main__":
     app.secret_key = os.urandom(24)
     app.run(debug=True,port=PORT)
+
