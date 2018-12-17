@@ -56,10 +56,6 @@ display: inline-block;
 color:rgb(220,220,220);
 }
 
-#ayana{
-text-align: center;
-}
-
 .sp-container {
 display: flex;
 flex-flow: row wrap;
@@ -92,4 +88,3 @@ margin: 15px 0 0;
 .sp-by {
 margin: 0;
 }
-
