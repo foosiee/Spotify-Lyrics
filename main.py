@@ -124,7 +124,6 @@ def sendLyrics():
 
 @app.route('/logout')
 def logout():
-    session.pop(session['access_token'],None)
     session.clear()
     return redirect("/", code=302)
 
