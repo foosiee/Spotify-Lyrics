@@ -143,7 +143,6 @@ def sendLyrics():
 
 @app.route('/logout')
 def logout():
-    session.pop(session['access_token'],None)
     session.clear()
     return redirect("http://127.0.0.1:5555", code=302)
 if __name__ == "__main__":
