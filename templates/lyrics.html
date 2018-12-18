@@ -2,34 +2,30 @@
 <head>
    <title>Spotify Lyrics</title>
    <link href="https://sp-bootstrap.global.ssl.fastly.net/8.0.0/sp-bootstrap.min.css" rel="stylesheet">
-   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}"> 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
    <script>
-
-      let lastTrack = ''
-      
+       let lastTrack = ''
       function recieveData(){
          console.log("Recieving data")
          $.get("/send", function(data) {
             lyrics = $.parseJSON(data);
             lyrics = lyrics.replace(/\n/g, "<br />");
-            $("#lyricBody").empty();
+            console.log(lyrics)
             $("#lyricBody").append(lyrics);
          })
       }
-
-      function sendData(track,artist){
+       function sendData(track,artist){
          console.log("Sending data");
          $.post("/reciever", {
             trackName: track,
             artistName: artist
          }, function(){
-
-         });
+            $("#lyricBody").empty()
+          });
       }
-
-      function extractTrack(track){
+       function extractTrack(track){
         console.log(track);
         trackName = track.item.name;
         artistName = track.item.artists[0].name;
@@ -40,7 +36,7 @@
          $("#scriptTrack").append("Currently playing: " + trackName);
          $("#scriptArtist").append("By: " + artistName);
          sendData(trackName,artistName);
-         setTimeout(recieveData(),1000)
+         setTimeout(recieveData,2000)
         }
         lastTrack = trackName
       }
@@ -51,7 +47,12 @@
                   'Authorization': `Bearer ${token}`
                }
             }).then(response => {
-               return response.json();
+               try{
+                  return response.json();
+               }
+               catch(e){
+                  return JSON.stringify("Currently Not Listening")
+               }
             }).then(data => {
                extractTrack(data);
           })
@@ -61,18 +62,26 @@
          getTrack("{{ token }}");
       }, 5000);
    </script>
-
-
-<html>
+ <html>
    <body>
       <div id="trackContainer">
          <h1 id="scriptTrack"></h1>
          <h3 id="scriptArtist"></h3>
       </div>
-
-      <div id="lyricContainer">
+       <div id="lyricContainer">
          <h4 id="lyricHead">Lyrics:</h4>
          <p id="lyricBody"></p>
       </div>
+
+      <div class="footer">
+            <a class="btn btn-sm btn-gray-darker" href="/logout">
+               Logout
+           </a>
+         <br />
+         <a id="github" href="https://github.com/foosiee/Spotify-Lyrics" target="_blank">
+             <p id="github">View on GitHub</p>
+         </a>
+     </div>
+
    </body>
-</html>
+</html> 

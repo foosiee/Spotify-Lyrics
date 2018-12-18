@@ -1,15 +1,25 @@
 <doctype html>
-<head>
-    <title>Login into Spotify</title>
-    <link href="https://sp-bootstrap.global.ssl.fastly.net/8.0.0/sp-bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
-</head>
-<html>
-    <div id="loginPage">
-        <h1>Spotify Lyrics</h1>
-        <a class="btn btn-sm btn-green" href="/login">
-            Login with Spotify
-        </a>
-    </div>
-</script>
-</html>
+    <head>
+        <title>Login into Spotify</title>
+        <link href="https://sp-bootstrap.global.ssl.fastly.net/8.0.0/sp-bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+    </head>
+    <html>
+        <div id="header">
+            <h1>Spotify Lyrics</h1>
+            <p id="desc">get some lyrics</p>
+        </div>
+
+        <div id="loginPage">
+            <a class="btn btn-sm btn-green" href="/login">
+                Login with Spotify
+            </a>
+        </div>
+        <div class="footer">
+            <span id="github">
+                <a id="github" href="https://github.com/foosiee/Spotify-Lyrics" target="_blank">View on GitHub</a>
+            </span>
+            <!-- <p id="ayana"><small><small>for ayana</small></small></p> -->
+        </div>
+    </script>
+    </html> 
