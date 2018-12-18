@@ -69,10 +69,15 @@ def callback():
     session['authorization_header'] = {"Authorization":"Bearer {}".format(session["access_token"])}
     
     return redirect("/lyrics")
+    
+@app.route("/sendtoken")
+def sendToken():
+    return json.dumps(session['access_token'])
+
 @app.route("/lyrics")
 def displayLyrics():
     try:
-        return render_template("lyrics.html",token=str(session["access_token"]))
+        return render_template("lyrics.html")#,token=str(session["access_token"]))
     except Exception:
         return redirect("/login")
 def getLyrics(track,artist):
