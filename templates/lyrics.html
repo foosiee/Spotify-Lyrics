@@ -2,19 +2,19 @@
 <html>
 <head>
    <title>Spotify Lyrics</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://sp-bootstrap.global.ssl.fastly.net/8.0.0/sp-bootstrap.min.css" rel="stylesheet">
-   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}"> 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
    <script src="{{ url_for('static',filename='js/lyrics.js') }}"></script>
 </head>
- 
+ <html>
    <body>
       <div id="trackContainer">
          <h1 id="scriptTrack"></h1>
          <h3 id="scriptArtist"></h3>
       </div>
-
-      <div id="lyricContainer">
+       <div id="lyricContainer">
          <h4 id="lyricHead">Lyrics:</h4>
          <p id="lyricBody"></p>
       </div>
@@ -29,4 +29,4 @@
          </a>
      </div>
    </body>
-</html>
+</html> 

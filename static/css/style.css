@@ -7,17 +7,36 @@ $white: rgb(255, 255, 255);
 $blue: #4688d7; */
 body {
   background-color: rgb(40,40,40);
-  color: rgba(255, 255, 255);
+
+  color: rgb(255, 255, 255);
   font-family: Circular, Helvetica arial, sans-serif;
   margin: 70px;
 }
+#header{
+  color:white;
+}
 #scriptTrack,#scriptArtist{
+color: white;
+
 margin: 0;
 padding: 0;
 }
 
-#lyricHead{
+
+#lyricHead, #christmas{
 color: rgb(30,215,96);
+}
+
+#me{
+  color: red;
+}
+
+#petty{
+  font-size: 8px;
+}
+
+#lyricBody{
+  color: white;
 }
 
 #new-releases {
@@ -25,36 +44,40 @@ max-width: 1800px;
 padding: 40px 0;
 }
 
-#header{
-display: inline;
-position: relative;
+#loginPage{
 text-align: center;
-padding: 25px;
-}
-
-#desc{
-color: rgb(170,170,170);
 }
 
 #loginbtn{
-position: relative;
-text-align: center;
+  position: relative;
+  text-align: center;
+}
+
+#header{
+  display: inline;
+  position: relative;
+  text-align: center;
+  padding: 25px;
+}
+
+#desc{
+  color: rgb(170,170,170);
 }
 
 .footer{
-color: rgb(170,170,170);
-position: relative;
-text-align: center;
-bottom:0px;
+  color: rgb(170,170,170);
+  position: relative;
+  text-align: center;
+  bottom:0px;
 }
 
 #github{
-color: rgb(170,170,170);
-display: inline-block;
+  color: rgb(170,170,170);
+  display: inline-block;
 }
 #github:hover{
-color:rgb(220,220,220);
-}
+  color:rgb(220,220,220);
+
 
 .sp-container {
 display: flex;

@@ -1,25 +1,30 @@
 <doctype html>
+    <html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>Login into Spotify</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://sp-bootstrap.global.ssl.fastly.net/8.0.0/sp-bootstrap.min.css" rel="stylesheet">
+        <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+        
         <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
     </head>
-    <html>
+    <body>
         <div id="header">
             <h1>Spotify Lyrics</h1>
             <p id="desc">get some lyrics</p>
         </div>
     
-        <div id="loginbtn">
+        <div id="loginPage">
             <a class="btn btn-sm btn-green" href="/login">
                 Login with Spotify
             </a>
         </div>
-    
+      
         <div class="footer">
             <span id="github">
                 <a id="github" href="https://github.com/foosiee/Spotify-Lyrics" target="_blank">View on GitHub</a>
             </span>
         </div>
-    </script>
-    </html>
+</body>
+</html> 

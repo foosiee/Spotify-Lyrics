@@ -1,40 +1,37 @@
 import json
-import os
-from flask import Flask, request, redirect, g, render_template, Response, session
+from flask import Flask,request, redirect, g, render_template, Response, session, send_from_directory
 import requests
+import os
 import base64
 import urllib.parse
-from tswift import Song
 from urllib.parse import quote_plus
+from tswift import Song
 
-# Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
+ # Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
+=======
+from urllib.parse import quote_plus
 # Visit this url to see all the steps, parameters, and expected response. 
-
-
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
-#  Client Keys
+
+ #  Client Keys
 CLIENT_ID = ""
 CLIENT_SECRET = ""
 
-# Spotify URLS
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_BASE_URL = "https://api.spotify.com"
 API_VERSION = "v1"
 SPOTIFY_API_URL = "{}/{}".format(SPOTIFY_API_BASE_URL, API_VERSION)
-
-
-# Server-side Parameters
-CLIENT_SIDE_URL = "http://127.0.0.1"
-PORT = 5555
+ # Server-side Parameters
+CLIENT_SIDE_URL = "http://www.spotify-lyrics.com"
+PORT = 80
 REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
-SCOPE = "playlist-modify-public playlist-modify-private user-read-currently-playing"
+SCOPE = "user-read-currently-playing"
 STATE = ""
 SHOW_DIALOG_bool = True
 SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
-
-
 auth_query_parameters = {
     "response_type": "code",
     "redirect_uri": REDIRECT_URI,
@@ -44,9 +41,13 @@ auth_query_parameters = {
     "client_id": CLIENT_ID
 }
 
+@app.route('/favicon.ico') 
+def favicon(): 
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("main.html")
 
 @app.route("/login")
 def login():
@@ -54,7 +55,6 @@ def login():
     url_args = "&".join(["{}={}".format(key,urllib.parse.quote(val)) for key,val in auth_query_parameters.items()])
     auth_url = "{}/?{}".format(SPOTIFY_AUTH_URL, url_args)
     return redirect(auth_url)
-
 
 @app.route("/callback/q")
 def callback():
@@ -69,21 +69,20 @@ def callback():
     base = "{}:{}"
     format_client = base.format(CLIENT_ID,CLIENT_SECRET)
     base64encoded = base64.urlsafe_b64encode(format_client.encode()).decode()
-    headers = {"Authorization": "Basic {}".format(base64encoded)}
-    post_request = requests.post(SPOTIFY_TOKEN_URL, data=session['code_payload'], headers=headers)
 
-    # Auth Step 5: Tokens are Returned to Application
+    session['headers'] = {"Authorization": "Basic {}".format(base64encoded)}
+    post_request = requests.post(SPOTIFY_TOKEN_URL, data=session['code_payload'], headers=session['headers'])
+
+     # Auth Step 5: Tokens are Returned to Application
     response_data = json.loads(post_request.text)
-
-    session['access_token'] = response_data["access_token"]
-
-    session['refresh_token'] = response_data["refresh_token"]
+    session["access_token"] = response_data["access_token"]
+    refresh_token = response_data["refresh_token"]
     token_type = response_data["token_type"]
     expires_in = response_data["expires_in"]
     print(expires_in)
 
-    # Auth Step 6: Use the access token to access Spotify API
-    session['authorization_header'] = {"Authorization":"Bearer {}".format(session['access_token'])}
+     # Auth Step 6: Use the access token to access Spotify API
+    session['authorization_header'] = {"Authorization":"Bearer {}".format(session["access_token"])}
     
     return redirect("/lyrics")
 
@@ -93,7 +92,10 @@ def sendToken():
 
 @app.route("/lyrics")
 def displayLyrics():
-    return render_template("lyrics.html")
+    try:
+        return render_template("lyrics.html")#,token=str(session["access_token"]))
+    except Exception:
+        return redirect("/login")
 
 def getLyrics(track,artist):
     try:
@@ -119,33 +121,32 @@ def getLyrics(track,artist):
             s = Song(url=link)
             return s.lyrics
         except AttributeError:
-            return "no lyrics found:("
+            return "no lyrics found on metrolyrics:("
 
 @app.route('/reciever', methods = ['POST'])
 def getTrackInfo():
-
     session['postTrack'] = request.form['trackName']
-
     session['postArtist'] = request.form['artistName']
-
     session['lyrics'] = getLyrics(session['postTrack'],session['postArtist'])
-    print("Got track -- Track: ", session['postTrack'], " Artist: ", session['postArtist'])
 
     return "Track: {} Artist: {}".format(session['postTrack'],session['postArtist'])
-
+    
 @app.route('/send')
 def sendLyrics():
     try:
-        print("Sent lyrics for: ", session['postTrack'])
         return json.dumps(session['lyrics'])
     except KeyError:
-        return json.dumps("no lyrics found :(")
+        return json.dumps("Lyrics not found on metrolyrics:(")
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect("http://127.0.0.1:5555", code=302)
-if __name__ == "__main__":
-    app.secret_key = os.urandom(24)
-    app.run(debug=True,port=PORT)
+    return redirect("/", code=302)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404
+
+if __name__ == "__main__":
+    app.run(debug=True,port=PORT)
