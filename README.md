@@ -1,5 +1,6 @@
 # Spotify-Lyrics
 flask app to display lyrics on webpage
+live application @ spotify-lyrics.com
 
 flask web app that authenticates the users spotify account and will display the current track playing,
 the artist of that track and the lyrics of that track in the browswer like so:
@@ -8,6 +9,4 @@ the artist of that track and the lyrics of that track in the browswer like so:
 
 the program obtains lyrics using the python package tswift which scrapes metrolyrics.
 
-still needs quite a bit of error handling
-work in progress
-
+still could use some work on reliability. don't quite yet know how it will scale up either. some more special cases to be added soon. 
