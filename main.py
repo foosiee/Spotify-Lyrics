@@ -6,15 +6,19 @@ import base64
 import urllib.parse
 from urllib.parse import quote_plus
 from tswift import Song
+
  # Authentication Steps, paramaters, and responses are defined at https://developer.spotify.com/web-api/authorization-guide/
+=======
+from urllib.parse import quote_plus
 # Visit this url to see all the steps, parameters, and expected response. 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+
  #  Client Keys
 CLIENT_ID = ""
 CLIENT_SECRET = ""
- # Spotify URLS
+
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_BASE_URL = "https://api.spotify.com"
@@ -65,6 +69,7 @@ def callback():
     base = "{}:{}"
     format_client = base.format(CLIENT_ID,CLIENT_SECRET)
     base64encoded = base64.urlsafe_b64encode(format_client.encode()).decode()
+
     session['headers'] = {"Authorization": "Basic {}".format(base64encoded)}
     post_request = requests.post(SPOTIFY_TOKEN_URL, data=session['code_payload'], headers=session['headers'])
 
@@ -74,12 +79,13 @@ def callback():
     refresh_token = response_data["refresh_token"]
     token_type = response_data["token_type"]
     expires_in = response_data["expires_in"]
+    print(expires_in)
 
      # Auth Step 6: Use the access token to access Spotify API
     session['authorization_header'] = {"Authorization":"Bearer {}".format(session["access_token"])}
     
     return redirect("/lyrics")
-    
+
 @app.route("/sendtoken")
 def sendToken():
     return json.dumps(session['access_token'])
