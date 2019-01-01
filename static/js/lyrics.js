@@ -1,14 +1,23 @@
 let lastTrack = ''
 
+function podcast(){
+    emptyDOM("all");
+    editDOM("#scriptTrack", "Listening to podcast");
+    editDOM("#lyricBody", "no lyrics or annotation");
+ }
+
 function noTrack(){
-    emptyDOM("#scriptTrack");
-    emptyDOM("#scriptArtist");
-    emptyDOM("#lyricBody");
+    emptyDOM("all")
     editDOM("#scriptTrack", "Nothing is playing");
     editDOM("#lyricBody", "nadda");
  }
 
 function emptyDOM(identity){
+    if(identity == "all"){
+        emptyDOM("#scriptTrack");
+        emptyDOM("#scriptArtist");
+        emptyDOM("#lyricBody");
+     }
     $(identity).empty();
  }
  
@@ -38,6 +47,9 @@ function recieveData(){
         $.get("/send", function(data) {
         lyrics = $.parseJSON(data);
         lyrics = lyrics.replace(/\n/g, "<br />");
+        if(lyrics == ""){
+            lyrics = "no lyrics found :(";
+        }
         console.log(lyrics)
         editDOM("#lyricBody",lyrics)
         })
@@ -47,9 +59,7 @@ function sendData(track,artist){
         $.post("/reciever", {
         trackName: track,
         artistName: artist
-        }, function(){
-            emptyDOM("#lyricBody");
-        });
+        })
     }
 function extractTrack(track){
     console.log(track);
@@ -58,12 +68,11 @@ function extractTrack(track){
     trackFormat = format(trackName);
     console.log(trackFormat,artistName);
     if (lastTrack != trackName){
-        emptyDOM("#scriptTrack");
-        emptyDOM("#scriptArtist");
+        emptyDOM("all");
         editDOM("#scriptTrack","Currently playing: " + trackName);
         editDOM("#scriptArtist", "By: " + artistName);
         sendData(trackFormat,artistName);
-        setTimeout(recieveData,2000)
+        setTimeout(recieveData,2500);
     }
 lastTrack = trackName
     }
@@ -78,9 +87,15 @@ function getTrack(token){
             return response.json();
         })
         .then(data => {
+            // if(data.currently_playing_type == "track"){
             extractTrack(data);
+            //  }
+            //  else{
+            //     podcast();
+            //  }
         })
         .catch(err => {
+            console.log(err);
             noTrack();
       })
     }

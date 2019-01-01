@@ -7,7 +7,7 @@ $white: rgb(255, 255, 255);
 $blue: #4688d7; */
 body {
   background-color: rgb(40,40,40);
-  /*color: rgb(255, 255, 255);*/
+  color: rgb(255, 255, 255);
   font-family: Circular, Helvetica arial, sans-serif;
   margin: 70px;
 }
@@ -19,9 +19,19 @@ color: white;
 margin: 0;
 padding: 0;
 }
-#lyricHead{
+
+#lyricHead, #christmas{
 color: rgb(30,215,96);
 }
+
+#me{
+  color: red;
+}
+
+#petty{
+  font-size: 8px;
+}
+
 #lyricBody{
   color: white;
 }
@@ -32,6 +42,11 @@ padding: 40px 0;
 
 #loginPage{
 text-align: center;
+}
+
+#loginbtn{
+  position: relative;
+  text-align: center;
 }
 
 #header{
