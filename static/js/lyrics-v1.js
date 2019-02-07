@@ -1,4 +1,4 @@
-let lastTrack = ''
+let lastTrack = '';
 
 function podcast(){
     emptyDOM("all");
@@ -7,7 +7,7 @@ function podcast(){
  }
 
 function noTrack(){
-    emptyDOM("all")
+    emptyDOM("all");
     editDOM("#scriptTrack", "Nothing is playing");
     editDOM("#lyricBody", "nadda");
  }
@@ -17,6 +17,7 @@ function emptyDOM(identity){
         emptyDOM("#scriptTrack");
         emptyDOM("#scriptArtist");
         emptyDOM("#lyricBody");
+        emptyDOM("#link");
      }
     $(identity).empty();
  }
@@ -30,54 +31,60 @@ function format(track){
     track = track.replace(/[^\w\s]/gi, '');
     track = track.toLowerCase();
  
-    return track
+    return track;
  }
 
 function getToken(){
-    console.log("getting token");
+    //console.log("getting token");
     $.get("/sendtoken", function(data){
        token = $.parseJSON(data);
-       console.log("token recieved: " + token);
+       //console.log("token recieved: " + token);
        getTrack(token);
        return token;
     })
  }
 function recieveData(){
-        console.log("Recieving data")
+        //console.log("Recieving data")
         $.get("/send", function(data) {
         lyrics = $.parseJSON(data);
-        lyrics = lyrics.replace(/\n/g, "<br />");
+        if(typeof lyrics == 'string'){
+            lyrics = lyrics.replace(/\n/g, "<br />");
+            editDOM("#lyricBody",lyrics);
+        }
+        else{
+            editDOM("#lyricBody",lyrics[0]);
+            editDOM("#link", "click for lyrics on azlyrics.com");
+            $("#link").attr("href", lyrics[1]);
+        }
         if(lyrics == ""){
             lyrics = "no lyrics found :(";
         }
-        console.log(lyrics)
-        editDOM("#lyricBody",lyrics)
         })
     }
 function sendData(track,artist){
-        console.log("Sending data");
+        //console.log("Sending data");
         $.post("/reciever", {
         trackName: track,
         artistName: artist
         })
     }
-function extractTrack(track){
-    console.log(track);
-    trackName = track.item.name;
-    artistName = track.item.artists[0].name;
-    trackFormat = format(trackName);
-    console.log(trackFormat,artistName);
-    if (lastTrack != trackName){
-        emptyDOM("all");
-        editDOM("#scriptTrack","Currently playing: " + trackName);
-        editDOM("#scriptArtist", "By: " + artistName);
-        sendData(trackFormat,artistName);
-        setTimeout(recieveData,2500);
-    }
-lastTrack = trackName
+    function extractTrack(track){
+        //console.log(track);
+        trackName = track.item.name;
+        artistName = track.item.artists[0].name;
+        trackFormat = format(trackName);
+        //console.log(trackFormat,artistName);
+        if (lastTrack != trackName){
+            emptyDOM("all");
+            editDOM("#scriptTrack","Currently playing: " + trackName);
+            editDOM("#scriptArtist", "By: " + artistName);
+            sendData(trackFormat,artistName);
+            setTimeout(recieveData,2500);
+        }
+        lastTrack = trackName;
     }
 function getTrack(token){
-        console.log(token);
+        //console.log(token);
         fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -95,12 +102,12 @@ function getTrack(token){
             //  }
         })
         .catch(err => {
-            console.log(err);
+            //console.log(err);
             noTrack();
       })
     }
 token = getToken();
-console.log(token);
+//console.log(token);
 getTrack(token);
 setInterval(function() {
     getTrack(token);
