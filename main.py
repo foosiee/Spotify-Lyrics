@@ -12,10 +12,6 @@ from googlesearch import search
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
-#     getattr(ssl, '_create_unverified_context', None)): 
-#     ssl._create_default_https_context = ssl._create_unverified_context
-
  #  Client Keys
 CLIENT_ID = ""
 CLIENT_SECRET = ""
@@ -139,10 +135,6 @@ def sendLyrics():
         return json.dumps(session['lyrics'])
     except KeyError:
         return json.dumps("lyrics not found on metrolyrics:(")
-
-@app.route("/ayana")
-def ayanaPage():
-    return render_template("ayana-v1.html")
 
 @app.route('/logout')
 def logout():
