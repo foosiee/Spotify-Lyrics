@@ -2,7 +2,6 @@
 
 a python flask App for obtaining the users current track and displaying its lyrics on the browser. 
 
-[link]
 (http://spotify-lyrics.com/)
 
 ## login
