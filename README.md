@@ -1,7 +1,9 @@
 # Spotify-Lyrics
 
 a python flask App for obtaining the users current track and displaying its lyrics on the browser. 
-[link](www.spotify-lyrics.com)
+
+[link]
+(http://spotify-lyrics.com/)
 
 ## login
 <img width="1304" alt="screen shot 2019-02-11 at 7 52 08 pm" src="https://user-images.githubusercontent.com/33300547/52603841-8c643580-2e36-11e9-995c-0e3f95023c7a.png">
