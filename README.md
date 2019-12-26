@@ -1,5 +1,8 @@
 # Spotify-Lyrics
 
+THIS REPO HAS BEEN MOVED TO THIS [NEW REPO](https://github.com/foosiee/Spotify-Lyrics-v2-public)
+- The main change is to a serverless architecture
+
 a python flask App for obtaining the users current track and displaying its lyrics on the browser. 
 
 (http://spotify-lyrics.com/)
